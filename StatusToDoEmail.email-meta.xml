@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Email after ToDo status changed</description>
+    <encodingKey>UTF-8</encodingKey>
+    <name>Status ToDo Email</name>
+    <style>none</style>
+    <subject>Your ToDo Task changed its status</subject>
+    <type>text</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

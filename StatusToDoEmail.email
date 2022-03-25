@@ -1,0 +1,13 @@
+Dear {!ToDo__c.CreatedBy},
+
+ Your ToDo Task just changed its status!
+
+
+Your task is:
+
+Title: {!ToDo__c.Name},
+Status: {!ToDo__c.Status__c},
+Category: {!ToDo__c.Category__c},
+Deadline: {!ToDo__c.Deadline__c}.
+
+Have a good day!
