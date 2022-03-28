@@ -1,3 +1,25 @@
 <template>
-    
+    <lightning-card title="ToDoList" icon-name="custom:custom57">
+        <div class="slds-var-m-around_medium">
+            <lightning-layout vertical-align="center" horizontal-align="spread">
+                <lightning-layout-item>
+                    
+                </lightning-layout-item>
+                <lightning-layout-item>
+                    <lightning-button label="Create New" title="Create New" onclick={openModal} class="slds-m-left_x-small"></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+            <template if:true={isModalOpen}>
+                
+            </template>
+            <template for:each={list} for:item="item">
+                <c-todo-item
+                    class="conditional slds-show slds-is-relative"
+                    key={item.Id}
+                    item={item}
+                    data-category={item.Category__c}
+                ></c-todo-item>
+            </template>
+        </div>
+    </lightning-card>
 </template>

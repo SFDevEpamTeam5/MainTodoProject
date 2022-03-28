@@ -2,18 +2,42 @@ public with sharing class ToDoTriggerHandler {
     public static void onBeforeInsert(List<ToDo__c> todoList) {
         recordsProcessing(todoList, false);
     }
-    public static void onBeforeUpdate(Map<Id,ToDo__c> oldTodoMap,Map<Id,ToDo__c> newTodoMap) {
-        List<ToDo__c> TodosForProcess = new List<ToDo__c>();
-        for (Id key : oldTodoMap.keySet()) {
-            if (oldTodoMap.get(key).Deadline__c != newTodoMap.get(key).Deadline__c ||
-            oldTodoMap.get(key).Count_of_subTodo__c != newTodoMap.get(key).Count_of_subTodo__c ||
-            oldTodoMap.get(key).Count_of_open_SubTodo__c != newTodoMap.get(key).Count_of_open_SubTodo__c ||
-            oldTodoMap.get(key).Completion_Date__c != newTodoMap.get(key).Completion_Date__c ||
-            oldTodoMap.get(key).Status__c != newTodoMap.get(key).Status__c ||
-            oldTodoMap.get(key).isDone__c != newTodoMap.get(key).isDone__c) {
-                TodosForProcess.add(newTodoMap.get(key));
+    public static void onBeforeUpdate(Map<Id,ToDo__c> oldmap,Map<Id,ToDo__c> newmap) {
+        recordsProcessing(newmap.values(), true);
+    }
+    private static void recordsProcessing(List<ToDo__c> todoList,Boolean isUpdate) {
+        for (ToDo__c t : todoList) {
+            if (isUpdate) {
+                if (t.Status__c != 'In progress' && t.Count_of_open_SubTodo__c != 0 && t.Count_of_open_SubTodo__c < t.Count_of_subTodo__c) {
+                    t.Status__c = 'In progress';
+                    t.Completion_Date__c = null;
+                    t.IsDone__c = false;
+                }
+                if (t.Status__c != 'Ready to take' && t.Count_of_SubTodo__c > 0 && t.Count_of_open_SubTodo__c == t.Count_of_SubTodo__c) {
+                    t.Status__c = 'Ready to take';
+                    t.Completion_Date__c = null;
+                    t.IsDone__c = false;
+                }
+                if (t.Status__c != 'Done' && t.Count_of_open_SubTodo__c == 0 && t.Count_of_subTodo__c > 0) {
+                    t.Status__c = 'Done';
+                    t.IsDone__c = true;
+                    if (t.Completion_Date__c == null) {
+                        t.Completion_Date__c = Date.today();
+                    }
+                }
             }
-            recordsProcessing(TodosForProcess, true);
+            if (t.Deadline__c == null) {
+                t.Deadline__c.AddError('Incorrect Date');
+            }
+            if ((t.Status__c != 'Done' && t.Completion_Date__c != null) ||
+            (t.Status__c == 'Done' && t.Completion_Date__c == null)) {
+                t.Completion_Date__c.AddError('Completion Date is incorrect');
+            }
+            String category = getCategory(t.Deadline__c, t.Completion_Date__c);
+            t.RecordTypeId = getToDoRecordTypes().get(category);
+            if (!isUpdate) {
+                t.OwnerId = getQueues().get(category);
+            }
         }
     }
     private static Map<String,String> getToDoRecordTypes() {
@@ -31,51 +55,22 @@ public with sharing class ToDoTriggerHandler {
         }
         return queuesMap;
     }
-    private static void recordsProcessing(List<ToDo__c> todoList,Boolean isUpdate) {
-        Map<String,String> reccordTypesMap = getToDoRecordTypes();
-        Map<String,String> queuesMap = getQueues();
-        for (ToDo__c t : todoList) {
-            if (isUpdate) {
-                if ((t.Status__c == 'Done' || t.Status__c == 'Ready to take') && t.Count_of_open_SubTodo__c != 0 && t.Count_of_subTodo__c > 0) {
-                    t.Status__c = 'In progress';
-                    t.Completion_Date__c = null;
-                }
-                if (t.Count_of_open_SubTodo__c == 0 && t.Count_of_subTodo__c > 0) {
-                    t.Status__c = 'Done';
-                }
-            }
-            String category = '';
-            if (t.Status__c == 'Done') {
-                if (t.Completion_Date__c == null) {
-                    t.Completion_Date__c = Date.today();
-                }
-                category = getCategory(t.deadline__c, t.Completion_Date__c);
-                t.IsDone__c = true;
-            } else {
-                if (t.Completion_Date__c != null) {
-                    t.Completion_Date__c = null;
-                }
-                category = getCategory(t.deadline__c, Date.today());
-                t.IsDone__c = false;
-            }
-            t.RecordTypeId = reccordTypesMap.get(category);
-            t.OwnerId = queuesMap.get(category);
+    private static String getCategory(Date deadline, Date completionDate) {
+        if (completionDate == null) {
+            completionDate = Date.today();
         }
-    }
-    private static String getCategory(Date deadline, Date targetDate) {
-        if (deadline > targetDate +1) {
+        if (deadline > completionDate +1) {
             return 'Later';
         }
-        if (deadline == targetDate + 1) {
+        if (deadline == completionDate + 1) {
             return 'Tomorrow';
         }
-        if (deadline == targetDate) {
+        if (deadline == completionDate) {
             return 'Today';
         }
-        if (deadline < targetDate) {
+        if (deadline < completionDate) {
             return 'Overdue';
         }
         return null;
     }
-    
 }
