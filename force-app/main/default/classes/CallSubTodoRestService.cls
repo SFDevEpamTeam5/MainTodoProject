@@ -1,49 +1,48 @@
-public class CallTodoRestService {
-	
-    private static String restServiceOrg = 'https://epam-1e-dev-ed.lightning.force.com/services/apexrest/Todo/';
+public class CallSubTodoRestService {
+    
+    private static String restServiceOrg = 'https://epam-1e-dev-ed.lightning.force.com/services/apexrest/SubTodo/';
 
     //get
-    public static Todo__c getTodo(Id todoId) {
-        HttpResponse response = ConnectHelper.makeRequest('GET', null, todoId, restServiceOrg);
-        Todo__c resAcc = new Todo__c();
+    public static SubToDo__c getSubTodo(Id subTodoId) {
+        HttpResponse response = ConnectHelper.makeRequest('GET', null, subTodoId, restServiceOrg);
+        SubToDo__c resSub = new SubToDo__c();
         if (response.getStatusCode() == 200) {
             String body = response.getBody();
         	if(body == ''){
             	System.debug('No Todo');
         		return null;    
         		}
-            resAcc = (Todo__c)JSON.deserialize(response.getBody(), Todo__c.class);
+            resSub = (SubToDo__c)JSON.deserialize(response.getBody(), SubToDo__c.class);
         	}
         
-        System.debug(resAcc);
-        return resAcc;        
+        return resSub;        
     }
     //post
-    public static List<Todo__c> callPost(List<Todo__c> todoList){
-        String JSONString = JSON.serialize(todoList);
+    public static List<SubToDo__c> callPost(List<SubToDo__c> subtodoList){
+        String JSONString = JSON.serialize(subtodoList);
 
         HttpResponse response = ConnectHelper.makeRequest('POST', JSONString, null, restServiceOrg);
-               
+         
+        System.debug(response.getStatusCode() + ' ' + response.getBody());
+        
         if (response.getStatusCode() == 200) {
             System.debug('Code 200');
             Map<String, Object> resMap = (Map<String, Object>)JSON.deserializeUntyped(response.getBody());
-        	List<Todo__c> todoListOrigin = [SELECT Id, Name, Category__c, Completion_Date__c, Deadline__c,
-                          IsDone__c, RecordTypeId, Status__c, 
-                          Id_Todo_from_another_org__c FROM Todo__c WHERE Id IN : resMap.keySet()];
-        	for(Todo__c t : todoListOrigin){
-            	t.Id_Todo_from_another_org__c = (String)resMap.get(String.valueOf(t.Id));
+        	List<SubToDo__c> subtodoListOrigin = [SELECT Id, Name, Id_SubTodo_from_another_org__c, IsDone__c, ToDo__c FROM SubToDo__c WHERE Id IN : resMap.keySet()];
+        	for(SubToDo__c t : subtodoListOrigin){
+            	t.Id_SubTodo_from_another_org__c = (String)resMap.get(String.valueOf(t.Id));
         	}
-        	if (todoListOrigin.size() > 0) update todoListOrigin;         
-        	return todoListOrigin;
+        	if (subtodoListOrigin.size() > 0) update subtodoListOrigin;         
+        	return subtodoListOrigin;
         	}
         return null;            
     }
     	//delete
-        public static List<String> callDelete(List<ID> idTodoFromAnotherOrg){
+        public static List<String> callDelete(List<ID> idSubTodoFromAnotherOrg){
         
         List<String> listUndeletedTodoFromanotherOrg = new List<String>();    
         
-        String JSONString = JSON.serialize(idTodoFromAnotherOrg);
+        String JSONString = JSON.serialize(idSubTodoFromAnotherOrg);
 
         HttpResponse response = ConnectHelper.makeRequest('DELETE', JSONString, null, restServiceOrg);
         String responseBody = response.getBody();
@@ -67,11 +66,11 @@ public class CallTodoRestService {
         return null;            
     }
     //update
-    public static Map<Id, String> callPatch(List<Todo__c> listTodosForUpdate){
+    public static Map<Id, String> callPatch(List<SubToDo__c> listSubTodosForUpdate){
         
         Map<Id, String> mapResultFromResponse = new Map<Id, String>();
                  
-        String JSONString = JSON.serialize(listTodosForUpdate);
+        String JSONString = JSON.serialize(listSubTodosForUpdate);
 
         HttpResponse response = ConnectHelper.makeRequest('PATCH', JSONString, null, restServiceOrg);
 
@@ -90,10 +89,10 @@ public class CallTodoRestService {
         return null;            
     }
     //upsert
-    public static Map<Id, String> callPut(List<Todo__c> listTodosForUpdate){
+    public static Map<Id, String> callPut(List<SubToDo__c> listTodosForUpdate){
         
         Map<Id, String> mapResultFromResponse = new Map<Id, String>();
-        Map<Id, Id> todosWereCreated = new Map<Id, Id>();
+        Map<Id, Id> subtodosWereCreated = new Map<Id, Id>();
             
         
         String JSONString = JSON.serialize(listTodosForUpdate);
@@ -106,16 +105,16 @@ public class CallTodoRestService {
             
             for(String str : resMap.keySet()){
                 String res = (String)resMap.get(str);
-                Id todoId = (Id)str;
+                Id subtodoId = (Id)str;
                 if(res.contains('record created')){
                     String idCreatedTodo = res.substring(res.lastIndexOf(':') + 1).trim();
                     mapResultFromResponse.put(str, 'record created');
-                    todosWereCreated.put((Id)str, (Id)idCreatedTodo);
-                    if(todosWereCreated.size() > 0){
-                        updateTodos(todosWereCreated);
+                    subtodosWereCreated.put((Id)str, (Id)idCreatedTodo);
+                    if(subtodosWereCreated.size() > 0){
+                        updateSubTodos(subtodosWereCreated);
                     }
                 }
-                mapResultFromResponse.put(todoId, res);       
+                mapResultFromResponse.put(subtodoId, res);       
             }
         }
             if(mapResultFromResponse.size() > 0){
@@ -124,15 +123,11 @@ public class CallTodoRestService {
         return null;            
     }
           
-    public static void updateTodos(Map<Id, Id> todosWereCreated){
-        List<Todo__c> todoListOrigin = [SELECT Id, Name, Category__c, Completion_Date__c, Deadline__c,
-                          IsDone__c, RecordTypeId, Status__c, 
-                          Id_Todo_from_another_org__c FROM Todo__c WHERE Id IN : todosWereCreated.keySet()];
-        for(Todo__c tid : todoListOrigin){
-            tid.Id_Todo_from_another_org__c = todosWereCreated.get(tid.Id);
+    public static void updateSubTodos(Map<Id, Id> subtodosWereCreated){
+        List<SubToDo__c> subtodoListOrigin = [SELECT Id, Name, Id_SubTodo_from_another_org__c, IsDone__c, ToDo__c FROM SubToDo__c WHERE Id IN : subtodosWereCreated.keySet()];
+        for(SubToDo__c sid : subtodoListOrigin){
+            sid.Id_SubTodo_from_another_org__c = subtodosWereCreated.get(sid.Id);
         }
-        update todoListOrigin;
+        update subtodoListOrigin;
     }
-    
-        
 }
