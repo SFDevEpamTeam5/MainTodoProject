@@ -19,12 +19,8 @@ global with sharing class TodoAPI {
         List<Todo__c> todoList = getListFromBody(req);
         List<Todo__c> forInsert = new List<Todo__c>();
         for(Todo__c t : todoList){
-            t.Id_Todo_from_another_org__c = t.Id;
-            Map<String, Object> toDotMap1 = new Map<String, Object>( t.getPopulatedFieldsAsMap() );
-			toDotMap1.remove( 'Id' );
-            toDotMap1.remove( 'OwnerId' );
-			Todo__c newTodo = (Todo__c) JSON.deserialize( JSON.serialize( toDotMap1 ), Todo__c.class );
-            forInsert.add(newTodo);
+            Todo__c todoForInsert = createNewTodo(t);
+            forInsert.add(todoForInsert);
         }                          
         if(todoList.size() > 0){
             Map<String, String> resMap = new Map<String, String>();
@@ -80,13 +76,8 @@ global with sharing class TodoAPI {
         List<Todo__c> todoList = getListFromBody(req);
         List<Todo__c> forUpdate = new List<Todo__c>();
         for(Todo__c t : todoList){
-            Id another = t.Id;
-            t.Id = t.Id_Todo_from_another_org__c;
-            t.Id_Todo_from_another_org__c = another;
-            Map<String, Object> toDotMap1 = new Map<String, Object>( t.getPopulatedFieldsAsMap() );
-            toDotMap1.remove( 'OwnerId' );
-			Todo__c newTodo = (Todo__c) JSON.deserialize( JSON.serialize( toDotMap1 ), Todo__c.class );
-            forUpdate.add(newTodo);
+            Todo__c todoForUpdate = createNewTodo(t);
+            forUpdate.add(todoForUpdate);
         }                          
         if(forUpdate.size() > 0){
             Database.SaveResult[] srList = Database.update(forUpdate, false);
@@ -113,19 +104,8 @@ global with sharing class TodoAPI {
         List<Todo__c> todoList = getListFromBody(req);
         List<Todo__c> forUpdate = new List<Todo__c>();
         for(Todo__c t : todoList){
-            Id another = t.Id;
-            String idFromAnotherOrg = t.Id_Todo_from_another_org__c;  
-            if(String.isNotEmpty(t.Id_Todo_from_another_org__c)){
-                t.Id = t.Id_Todo_from_another_org__c;   
-            }
-            t.Id_Todo_from_another_org__c = another;
-            Map<String, Object> toDotMap1 = new Map<String, Object>(t.getPopulatedFieldsAsMap());
-			toDotMap1.remove( 'OwnerId' );
-            if (String.isEmpty(idFromAnotherOrg)){
-                toDotMap1.remove( 'Id' );
-            }
-			Todo__c newTodo = (Todo__c) JSON.deserialize( JSON.serialize( toDotMap1 ), Todo__c.class );
-            forUpdate.add(newTodo);
+            Todo__c todoForUpsert = createNewTodo(t);
+            forUpdate.add(todoForUpsert);
         }                          
         if(forUpdate.size() > 0){
             System.debug('forUpdate ' + forUpdate);
@@ -148,6 +128,24 @@ global with sharing class TodoAPI {
      	}
     	return null;
     }
+
+    @TestVisible
+    private static Todo__c createNewTodo(Todo__c t){
+        Id another = t.Id;
+        String idFromAnotherOrg = t.Id_Todo_from_another_org__c;  
+        if(String.isNotEmpty(t.Id_Todo_from_another_org__c)){
+            t.Id = t.Id_Todo_from_another_org__c;   
+        }
+        t.Id_Todo_from_another_org__c = another;
+        Map<String, Object> toDotMap1 = new Map<String, Object>(t.getPopulatedFieldsAsMap());
+		toDotMap1.remove( 'OwnerId' );
+        if (String.isEmpty(idFromAnotherOrg)){
+            toDotMap1.remove( 'Id' );
+        }
+		Todo__c newTodo = (Todo__c) JSON.deserialize( JSON.serialize( toDotMap1 ), Todo__c.class );
+        return newTodo;
+    }
+
     @TestVisible
     private static List<Todo__c> getListFromBody(RestRequest req){
         Blob jsonTodoString = req.requestBody;
