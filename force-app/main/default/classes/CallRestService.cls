@@ -1,46 +1,10 @@
 public class CallRestService {
-	private static String restServiceOrg = 'https://login.salesforce.com';
-    
-    public static String getAuthToken(){
-        Http http = new Http();
-        HttpRequest req = new HttpRequest();
-        
-        RestServiceSettings__c restServ = RestServiceSettings__c.getOrgDefaults();
-        String consumerKey = restServ.Consumer_Key__c;
-        String consumerSecret = restServ.Consumer_Secret__c;
-        req.setMethod('POST');
-        req.setEndpoint(restServiceOrg + '/services/oauth2/token');
-        req.setBody('grant_type=password' + '&client_id='+consumerKey + 
-                    '&client_secret='+consumerSecret + '&username='+ EncodingUtil.urlEncode(restServ.username__c, 'UTF-8') + '&password='+ EncodingUtil.urlEncode(restServ.password__c + restServ.SecurityToken__c, 'UTF-8'));
-                       
-        HTTPResponse response = http.send(req);
-        
-        while (response.getStatusCode() == 302) {
-    	req.setEndpoint(response.getHeader('Location'));
-    	response = new Http().send(req);
-		}
- 
-        ResponceWraper data = (ResponceWraper)JSON.deserialize(response.getBody(), ResponceWraper.class);
+	
+    private static String restServiceOrg = 'https://epam-1e-dev-ed.lightning.force.com/services/apexrest/Todo/';
 
-        return data.access_token;       
-    }
-    
     //get
     public static Todo__c getTodo(Id todoId) {
-        String token = getAuthToken();
- 		Http http = new Http();
-        HttpRequest request = new HttpRequest();
-        request.setMethod('GET');
-        request.setHeader('Authorization', 'Bearer ' + token);
-        request.setHeader('Content-Type', 'application/json');
-        request.setEndpoint('https://epam-1e-dev-ed.lightning.force.com/services/apexrest/Todo/' + todoId);
- 
-        HttpResponse response = http.send(request); 
- 		       
-        while (response.getStatusCode() == 302) {
-    	request.setEndpoint(response.getHeader('Location'));
-    	response = new Http().send(request);
-		}
+        HttpResponse response = ConnectHelper.makeRequest('GET', null, todoId, restServiceOrg);
         Todo__c resAcc = new Todo__c();
         if (response.getStatusCode() == 200) {
             String body = response.getBody();
@@ -51,32 +15,16 @@ public class CallRestService {
             resAcc = (Todo__c)JSON.deserialize(response.getBody(), Todo__c.class);
         	}
         
-        System.debug('OUt');
+        System.debug(resAcc);
         return resAcc;        
     }
     //post
     public static List<Todo__c> callPost(List<Todo__c> todoList){
-                      
-        String token = getAuthToken();
- 		Http http = new Http();
-        HttpRequest request = new HttpRequest();
         String JSONString = JSON.serialize(todoList);
-        request.setMethod('POST');
-        request.setHeader('Authorization', 'Bearer ' + token);
-        request.setHeader('Content-Type', 'application/json');
-        request.setEndpoint('https://epam-1e-dev-ed.lightning.force.com/services/apexrest/Todo/');
- 		request.setBody(JSONString);
+
+        HttpResponse response = ConnectHelper.makeRequest('POST', JSONString, null, restServiceOrg);
         
-        HttpResponse response = http.send(request); 
-                    
-        System.debug(JSONString);
         
-        System.debug('Calling post service');
-        
-        while (response.getStatusCode() == 302) {
-    	request.setEndpoint(response.getHeader('Location'));
-    	response = new Http().send(request);
-		}
         System.debug(response.getStatusCode() + ' ' + response.getBody());
         
         if (response.getStatusCode() == 200) {
@@ -96,29 +44,16 @@ public class CallRestService {
     	//delete
         public static List<String> callDelete(List<ID> idTodoFromAnotherOrg){
         
-        List<String> listUndeletedTodoFromanotherOrg = new List<String>();
-            
-        String token = getAuthToken();
- 		Http http = new Http();
-        HttpRequest request = new HttpRequest();
+        List<String> listUndeletedTodoFromanotherOrg = new List<String>();    
+        
         String JSONString = JSON.serialize(idTodoFromAnotherOrg);
-        request.setMethod('DELETE');
-        request.setHeader('Authorization', 'Bearer ' + token);
-        request.setHeader('Content-Type', 'application/json');
-        request.setEndpoint('https://epam-1e-dev-ed.lightning.force.com/services/apexrest/Todo/');
- 		request.setBody(JSONString);
-        
-        HttpResponse response = http.send(request); 
-                    
-        System.debug(JSONString);
-        
-        System.debug('Calling delete service');
-        
-        while (response.getStatusCode() == 302) {
-    	request.setEndpoint(response.getHeader('Location'));
-    	response = new Http().send(request);
-		}
-        
+
+        HttpResponse response = ConnectHelper.makeRequest('DELETE', JSONString, null, restServiceOrg);
+        String responseBody = response.getBody();
+        if(String.isEmpty(responseBody)){
+            System.debug('Nothing delete');
+            return null;
+        }
         if (response.getStatusCode() == 200) {
             Map<String, Object> resMap = (Map<String, Object>)JSON.deserializeUntyped(response.getBody());
             
@@ -138,25 +73,11 @@ public class CallRestService {
     public static Map<Id, String> callPatch(List<Todo__c> listTodosForUpdate){
         
         Map<Id, String> mapResultFromResponse = new Map<Id, String>();
-            
-        String token = getAuthToken();
- 		Http http = new Http();
-        HttpRequest request = new HttpRequest();
+                 
         String JSONString = JSON.serialize(listTodosForUpdate);
-        request.setMethod('PATCH');
-        request.setHeader('Authorization', 'Bearer ' + token);
-        request.setHeader('Content-Type', 'application/json');
-        request.setEndpoint('https://epam-1e-dev-ed.lightning.force.com/services/apexrest/Todo/');
- 		request.setBody(JSONString);
-        
-        HttpResponse response = http.send(request); 
-      
-        System.debug('Calling patch service');
-        
-        while (response.getStatusCode() == 302) {
-    	request.setEndpoint(response.getHeader('Location'));
-    	response = new Http().send(request);
-		}
+
+        HttpResponse response = ConnectHelper.makeRequest('PATCH', JSONString, null, restServiceOrg);
+
         if (response.getStatusCode() == 200) {
             Map<String, Object> resMap = (Map<String, Object>)JSON.deserializeUntyped(response.getBody());
             
@@ -178,26 +99,9 @@ public class CallRestService {
         List<Todo__c> todoForUpdate = new List<Todo__c>();
         Map<Id, Id> todosWereCreated = new Map<Id, Id>();
             
-        String token = getAuthToken();
- 		Http http = new Http();
-        HttpRequest request = new HttpRequest();
+        
         String JSONString = JSON.serialize(listTodosForUpdate);
-        request.setMethod('PUT');
-        request.setHeader('Authorization', 'Bearer ' + token);
-        request.setHeader('Content-Type', 'application/json');
-        request.setEndpoint('https://epam-1e-dev-ed.lightning.force.com/services/apexrest/Todo/');
- 		request.setBody(JSONString);
-        
-        HttpResponse response = http.send(request); 
-                    
-        System.debug(JSONString);
-        
-        System.debug('Calling put service');
-        
-        while (response.getStatusCode() == 302) {
-    	request.setEndpoint(response.getHeader('Location'));
-    	response = new Http().send(request);
-		}
+        HttpResponse response = ConnectHelper.makeRequest('PUT', JSONString, null, restServiceOrg);
         
         if (response.getStatusCode() == 200) {
             
@@ -223,15 +127,7 @@ public class CallRestService {
             }
         return null;            
     }
-    
-    
-    public static List<Todo__c> getListT(){
-        return [SELECT Id, Name, Category__c, Completion_Date__c, Deadline__c,
-                          IsDone__c, OwnerId, RecordTypeId, Status__c, 
-                          Id_Todo_from_another_org__c FROM Todo__c];
-    }
-    
-    
+          
     public static void updateTodos(Map<Id, Id> todosWereCreated){
         List<Todo__c> todoListOrigin = [SELECT Id, Name, Category__c, Completion_Date__c, Deadline__c,
                           IsDone__c, RecordTypeId, Status__c, 
@@ -242,9 +138,5 @@ public class CallRestService {
         update todoListOrigin;
     }
     
-        public class ResponceWraper {
-        public String access_token {get;set;}
-        public String id {get;set;}
-        public String token_type {get;set;}
-    }
+        
 }
