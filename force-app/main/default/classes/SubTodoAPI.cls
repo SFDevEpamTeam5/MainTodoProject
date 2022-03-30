@@ -15,13 +15,13 @@ global with sharing class SubTodoAPI {
         List<SubToDo__c> subtodoList = getListFromBody(req);
    
         List<SubToDo__c> subTodoForInsert = createListOfSubTodos(subtodoList);
-        
-        if(subtodoList.size() > 0){
+        System.debug(subTodoForInsert);
+        if(subTodoForInsert.size() > 0){
             Map<String, String> resMap = new Map<String, String>();
             Database.SaveResult[] srList = Database.insert(subTodoForInsert, false);
-            for (Integer i = 0; i < subtodoList.size(); i++) {
+            for (Integer i = 0; i < subTodoForInsert.size(); i++) {
     		Database.SaveResult sr = srList[i];
-    		SubTodo__c origRecord = subtodoList[i];
+    		SubTodo__c origRecord = subTodoForInsert[i];
                 if (sr.isSuccess()){
                     resMap.put(origRecord.Id_SubTodo_from_another_org__c, sr.getId());
                 }
@@ -133,7 +133,7 @@ global with sharing class SubTodoAPI {
                 s.Id = s.Id_SubTodo_from_another_org__c;   
             }
             s.Id_SubTodo_from_another_org__c = another;
-            s.Id_SubTodo_from_another_org__c = IdTodoSOurceidTodoOrig.get((Id)masterTodoForSub);
+            s.Todo__c = IdTodoSOurceidTodoOrig.get((Id)masterTodoForSub);
             Map<String, Object> subtoDotMap1 = new Map<String, Object>(s.getPopulatedFieldsAsMap());
 		    subtoDotMap1.remove( 'OwnerId' );
             if (String.isEmpty(idFromAnotherOrg)){
@@ -159,3 +159,4 @@ global with sharing class SubTodoAPI {
         return subtodoId;
     }
 }
+
