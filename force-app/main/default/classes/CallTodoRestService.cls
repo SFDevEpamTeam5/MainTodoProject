@@ -1,4 +1,4 @@
-public class CallRestService {
+public class CallTodoRestService {
 	
     private static String restServiceOrg = 'https://epam-1e-dev-ed.lightning.force.com/services/apexrest/Todo/';
 
