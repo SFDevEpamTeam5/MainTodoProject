@@ -23,12 +23,13 @@ public with sharing class ToDoTriggerHandler {
         Set<Id> recordtypesIds = ToDoUtility.getTodoRecordTypesIds(todoQueues);
         for (ToDo__c t : newTodoMap.values()) {
             if (!recordtypesIds.Contains(oldTodoMap.get(t.Id).OwnerId) && (!recordtypesIds.Contains(newTodoMap.get(t.Id).OwnerId))) {
-                if (t.Status__c != 'In progress' && t.Count_of_open_SubTodo__c != 0) {
+                if (t.Status__c != 'In progress' && t.Count_of_open_SubTodo__c != 0 &&
+                (oldTodoMap.get(t.Id).Count_of_subTodo__c != newTodoMap.get(t.Id).Count_of_subTodo__c || oldTodoMap.get(t.Id).Count_of_open_SubTodo__c != newTodoMap.get(t.Id).Count_of_open_SubTodo__c)) {
                     t.Status__c = 'In progress';
                     t.Completion_Date__c = null;
                     t.IsDone__c = false;
                 }
-                if (t.Status__c != 'Done' && t.Count_of_open_SubTodo__c == 0 && t.Count_of_subTodo__c >= 0) {
+                if (t.Status__c != 'Done' && t.Count_of_open_SubTodo__c == 0 && t.Count_of_subTodo__c >= 0 && (oldTodoMap.get(t.Id).Count_of_subTodo__c != newTodoMap.get(t.Id).Count_of_subTodo__c || oldTodoMap.get(t.Id).Count_of_open_SubTodo__c != newTodoMap.get(t.Id).Count_of_open_SubTodo__c)) {
                     t.Status__c = 'Done';
                     t.IsDone__c = true;
                     if (t.Completion_Date__c == null) {
