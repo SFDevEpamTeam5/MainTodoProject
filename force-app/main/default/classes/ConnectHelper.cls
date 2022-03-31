@@ -60,10 +60,7 @@ public with sharing class ConnectHelper {
         request.setMethod(setName);
         request.setHeader('Authorization', 'Bearer ' + token);
         request.setHeader('Content-Type', 'application/json');
-        if(todoId != null){
-            request.setEndpoint(endPoint + todoId);
-        }
-        request.setEndpoint(endPoint);
+        request.setEndpoint(endPoint + todoId);
         if(body != null){
             request.setBody(body);
         }
