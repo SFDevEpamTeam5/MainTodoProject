@@ -2,11 +2,6 @@
 <Queue xmlns="http://soap.sforce.com/2006/04/metadata">
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>Overdue</name>
-    <queueMembers>
-        <users>
-            <user>todouser777@yahoo.com</user>
-        </users>
-    </queueMembers>
     <queueSobject>
         <sobjectType>ToDo__c</sobjectType>
     </queueSobject>
