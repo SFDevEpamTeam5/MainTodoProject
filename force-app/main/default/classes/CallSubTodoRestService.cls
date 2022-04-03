@@ -1,6 +1,6 @@
 public class CallSubTodoRestService {
     
-    private static String restServiceOrg = 'https://epam-1e-dev-ed.lightning.force.com/services/apexrest/SubTodo/';
+    private static String restServiceOrg = 'https://mycompany-c1-dev-ed.my.salesforce.com/services/apexrest/SubTodo/';
 
     //get
     public static SubToDo__c getSubTodo(Id subTodoId) {

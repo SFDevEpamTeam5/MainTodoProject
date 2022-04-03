@@ -1,6 +1,6 @@
 public with sharing class ConnectHelper {
     private static String restServiceOrgForToken = 'https://login.salesforce.com';
-    private static String restServiceOrg = 'https://epam-1e-dev-ed.lightning.force.com/services/apexrest/Todo/';
+    private static String restServiceOrg = 'https://mycompany-c1-dev-ed.my.salesforce.com/services/apexrest/Todo/';
     private static String GET = 'GET';
     private static String POST = 'POST';
     private static String PATCH = 'PATCH';
