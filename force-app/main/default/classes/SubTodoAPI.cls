@@ -133,6 +133,7 @@ global with sharing class SubTodoAPI {
                 s.Id = s.Id_SubTodo_from_another_org__c;   
             }
             s.Id_SubTodo_from_another_org__c = another;
+            s.Insert_from_remote_org__c = true;
             s.Todo__c = IdTodoSOurceidTodoOrig.get((Id)masterTodoForSub);
             Map<String, Object> subtoDotMap1 = new Map<String, Object>(s.getPopulatedFieldsAsMap());
 		    subtoDotMap1.remove( 'OwnerId' );

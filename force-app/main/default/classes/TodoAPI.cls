@@ -137,6 +137,7 @@ global with sharing class TodoAPI {
             t.Id = t.Id_Todo_from_another_org__c;   
         }
         t.Id_Todo_from_another_org__c = another;
+        t.Insert_from_remote_org__c = true;
         Map<String, Object> toDotMap1 = new Map<String, Object>(t.getPopulatedFieldsAsMap());
 		toDotMap1.remove( 'OwnerId' );
         if (String.isEmpty(idFromAnotherOrg)){

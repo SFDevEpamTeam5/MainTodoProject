@@ -1,4 +1,6 @@
 public class ToDoUtility {
+    public static Boolean isUpdateNotRecurcive = true;
+    
     public static Map<String,Id> getToDoRecordTypes() {
         Map<String,Id> recordTypesMap = new Map<String,Id>();
         for (RecordType rt : [SELECT DeveloperName, Id FROM RecordType WHERE sObjectType = 'ToDo__c']) {
@@ -31,12 +33,5 @@ public class ToDoUtility {
             return 'Overdue';
         }
         return null;
-    }
-    public static Set<Id> getTodoRecordTypesIds(Map<String,Id> recordTypesMap) {
-        Set<Id> recordTypeIds = new Set<Id>();
-        for (String recordType : recordTypesMap.values()) {
-            recordTypeIds.add(recordType);
-        }
-        return recordTypeIds;
     }
 }

@@ -5,7 +5,8 @@ public class ToDoCategoriesUpdaterBatch implements Database.Batchable<SObject>{
     public ToDoCategoriesUpdaterBatch() {
         todorecordtypes = ToDoUtility.getToDoRecordTypes();
         todoqueues = ToDoUtility.getQueues();
-        todoQueuesIds = ToDoUtility.getTodoRecordTypesIds(todoqueues);
+        Set<Id> todoQueuesIds = new Set<Id>();
+        todoQueuesIds.addAll(todoqueues.values());
     }
     public Database.QueryLocator start(Database.BatchableContext bc) {
         return Database.getQueryLocator('SELECT Id, Name, Status__c, Deadline__c, '
@@ -13,7 +14,8 @@ public class ToDoCategoriesUpdaterBatch implements Database.Batchable<SObject>{
         +'WHERE OwnerId IN :todoQueuesIds AND Status__c != \'Done\'');
     }
     public void execute(Database.BatchableContext bc,List<SObject> scope) {
-        Set<Id> recordtypesIds = ToDoUtility.getTodoRecordTypesIds(todorecordtypes);
+        Set<Id> recordtypesIds = new Set<Id>();
+        recordtypesIds.addAll(todorecordtypes.values());
         List<ToDo__c> todolistForUpdate = new List<ToDo__c>();
         for (SObject s: scope) {
             ToDo__c t = (ToDo__c)s;
