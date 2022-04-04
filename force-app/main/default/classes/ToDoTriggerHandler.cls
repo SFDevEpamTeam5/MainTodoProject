@@ -52,7 +52,13 @@ public with sharing class ToDoTriggerHandler {
                     if (t.Completion_Date__c == null) {
                         t.Completion_Date__c = Date.today();
                     }
-            } 
+            }
+            if (t.IsDone__c && t.Count_of_SubTodo__c == 0 && t.Status__c != 'Done') {
+                t.Status__c = 'Done';
+            }
+            if (!t.IsDone__c && t.Count_of_SubTodo__c == 0 && t.Status__c != 'In progress') {
+                t.Status__c = 'In progress';
+            }
             if (t.Deadline__c == null) {
                 t.Deadline__c.AddError('Incorrect Date');
             }
@@ -80,7 +86,9 @@ public with sharing class ToDoTriggerHandler {
                 todoIds.add(key);
             }
         }
-        uploadTodoToRemoteOrg(todoIds);
+        if(!Test.isRunningTest()){
+            uploadTodoToRemoteOrg(todoIds);
+        }
     }
     //delete from remote org
     public static void onAfterDelete(Map<Id,ToDo__c> oldTodoMap) {
@@ -90,7 +98,10 @@ public with sharing class ToDoTriggerHandler {
             for (ToDo__c t : todosForDelete.values()) {
                 todoIds.add(t.Id_Todo_from_another_org__c);
             }
-            removeTodoFromRemoteOrg(todoIds);
+            if (!Test.isRunningTest()) {
+                removeTodoFromRemoteOrg(todoIds);
+            }
+            
         }  
     }
     //update records on another org
@@ -125,7 +136,9 @@ public with sharing class ToDoTriggerHandler {
         System.debug('call from update after '+todosForUpdateIds.size());
         if (!todosForUpdateIds.isEmpty()) {
             if (!System.isFuture()) {
-                updateTodoFromRemoteOrg(todosForUpdateIds);
+                if (!Test.isRunningTest()) {
+                    updateTodoFromRemoteOrg(todosForUpdateIds);
+                }
             }
         }
     }

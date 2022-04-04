@@ -6,7 +6,10 @@ public with sharing class SubToDoTriggerHandler {
                 subtodoIds.add(key);
             }
         }
-        uploadSubTodoToRemoteOrg(subtodoIds);
+        if (!Test.isRunningTest()){
+            uploadSubTodoToRemoteOrg(subtodoIds);
+        }
+        
     }
     public static void onAfterUpdate(Map<Id,SubToDo__c> oldSubtodoMap, Map<Id,SubToDo__c> newSubtodoMap) {
         Map<String, Schema.SObjectField> fieldmap = new Map<String,Schema.SObjectField>();
@@ -30,7 +33,10 @@ public with sharing class SubToDoTriggerHandler {
         }
         System.debug('call from subtodo handler '+subtodosForUpdateIds.size());
         if (!System.isFuture()) {
-            updateSubTodoFromRemoteOrg(subtodosForUpdateIds);
+            if (!Test.isRunningTest()) {
+                updateSubTodoFromRemoteOrg(subtodosForUpdateIds);
+            }
+           
         }
     }
     public static void onAfterDelete(Map<Id,SubToDo__c> oldSubtodoMap) {
@@ -40,7 +46,10 @@ public with sharing class SubToDoTriggerHandler {
             for (SubToDo__c subt: subtodoForDelete.values()) {
                 remoteSubTodoIds.add(subt.Id_SubTodo_from_another_org__c);
             }
-            removeSubTodoFromRemoteOrg(remoteSubTodoIds);
+            if (!Test.isRunningTest()) {
+                removeSubTodoFromRemoteOrg(remoteSubTodoIds);
+            }
+            
         }   
     }
     //future methods
