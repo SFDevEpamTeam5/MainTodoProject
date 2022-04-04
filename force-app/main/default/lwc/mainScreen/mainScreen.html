@@ -1,0 +1,28 @@
+<template>
+        <div class="c-container">
+            <lightning-layout multiple-rows="true">
+                <div onkeyup={handleKeyUp}>
+                    <lightning-input class="slds-p-left_xx-large" 
+                        name="search" placeholder="Search" type="search"
+                    ></lightning-input>
+                </div>
+                <p if:true={queryTerm}>
+                    Searched for {queryTerm}!</p>
+                    
+                    <lightning-button label="Add new Todo" class="c-button button-right"
+                    onclick={handleClick}></lightning-button>
+                <lightning-layout-item padding="around-small" size="12">
+                    <lightning-layout >
+                        
+                        <lightning-layout-item >
+                            <div >
+                                <div >
+                                   <c-my-card-holder></c-my-card-holder></div>
+                            </div>
+                        </lightning-layout-item>
+                        
+                    </lightning-layout>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+</template>

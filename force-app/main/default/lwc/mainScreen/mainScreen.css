@@ -1,0 +1,23 @@
+.c-container {
+    border: 1px solid #d8dde6;
+    
+    background: rgb(247, 244, 244);
+}
+.page-section {
+    border: solid 1px #ccc;
+    padding: 1rem;
+   
+}
+
+.page-main,.page-right  {
+    background: #dbebf7;
+}
+
+.c-button {
+        padding: 20px;
+        
+}    
+
+.button-right{
+    margin: 0 0 0 auto;
+}
