@@ -11,24 +11,26 @@ public with sharing class ConnectHelper {
         HttpRequest req = new HttpRequest();
         
         RestServiceSettings__c restServ = RestServiceSettings__c.getOrgDefaults();
-        String consumerKey = restServ.Consumer_Key__c;
-        String consumerSecret = restServ.Consumer_Secret__c;
-        String body = 'grant_type=password' + '&client_id='+consumerKey + 
-        '&client_secret='+consumerSecret + '&username='+ EncodingUtil.urlEncode(restServ.username__c, 'UTF-8') +
-         '&password='+ EncodingUtil.urlEncode(restServ.password__c + restServ.SecurityToken__c, 'UTF-8');
-        req.setMethod(POST);
-        req.setEndpoint(restServiceOrgForToken + '/services/oauth2/token');
-        req.setBody(body);
+        if(!Test.isRunningTest()){
+            String consumerKey = restServ.Consumer_Key__c;
+        	String consumerSecret = restServ.Consumer_Secret__c;
+        	String body = 'grant_type=password' + '&client_id='+consumerKey + 
+        	'&client_secret='+consumerSecret + '&username='+ EncodingUtil.urlEncode(restServ.username__c, 'UTF-8') +
+        	'&password='+ EncodingUtil.urlEncode(restServ.password__c + restServ.SecurityToken__c, 'UTF-8');
+        	req.setMethod(POST);
+        	req.setEndpoint(restServiceOrgForToken + '/services/oauth2/token');
+        	req.setBody(body);
 
-        HttpResponse response = http.send(req); 
+        	HttpResponse response = http.send(req); 
  		       
-        while (response.getStatusCode() == 302) {
-    	req.setEndpoint(response.getHeader('Location'));
-    	response = new Http().send(req);
-		}
-        ResponceWraper data = (ResponceWraper)JSON.deserialize(response.getBody(), ResponceWraper.class);
-
-        return data.access_token;       
+        	while (response.getStatusCode() == 302) {
+    			req.setEndpoint(response.getHeader('Location'));
+    			response = new Http().send(req);
+			}
+        	ResponceWraper data = (ResponceWraper)JSON.deserialize(response.getBody(), ResponceWraper.class);
+        	return data.access_token;
+        }
+        return 'token';
     }
 
     public static HttpResponse makeRequest(String methodName, String body, String todoId, String endPoint){
