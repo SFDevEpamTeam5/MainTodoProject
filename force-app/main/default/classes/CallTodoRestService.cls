@@ -1,6 +1,6 @@
 public class CallTodoRestService {
 	
-    private static String restServiceOrg = 'https://epam-1e-dev-ed.lightning.force.com/services/apexrest/Todo/';
+    private static String restServiceOrg = 'https://mycompany-c1-dev-ed.my.salesforce.com/services/apexrest/Todo/';
 
     //get
     public static Todo__c getTodo(Id todoId) {
