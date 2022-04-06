@@ -11,9 +11,7 @@
             
         
     </template>
-    <template if:true={error}>
-        <c-error-panel errors={error}></c-error-panel>
-    </template>
+    
     <template for:each={todo.SubToDos__r} for:item="subtodo">
         <lightning-layout key={subtodo.Id} class="conteiner" >
             <lightning-input  class="slds-p-left_small" type="checkbox" checked={checkboxVal} 
@@ -27,9 +25,9 @@
     <template if:false={todo}><p>No data available.</p></template>
    
 
-    <lightning-button label="Show my closed Todos" class="c-button"
-    onclick={handleClick}></lightning-button>
-
+    <template if:true={error}>
+        <c-error-panel errors={error}></c-error-panel>
+    </template>
     
    
 </template>

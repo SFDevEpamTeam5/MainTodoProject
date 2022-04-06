@@ -1,20 +1,25 @@
-import { LightningElement, track, wire } from 'lwc';
+import { LightningElement, track, wire, api } from 'lwc';
 import getTodo from '@salesforce/apex/GetTodoSubTodo.getTodo';
 import { deleteRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
-import Id from '@salesforce/user/Id';
-import getQueue from '@salesforce/apex/GetTodoSubTodo.getQueue';
+
+import templateProgress from './templateProgress.html';
+import templateDone from './templateDone.html';
+import getTodoDone from '@salesforce/apex/GetTodoSubTodo.getTodoDone';
 
 export default class MyCardHolder extends LightningElement {
 
 @track todos;
 @track error;
+@track todosdn;
+@api stodo;
 
-userId = Id;
+
+
 todoId;
-wiredTodoResult;
-
+ wiredTodoResult;
+ showTemplateProgress = true;
 	
 	@wire(getTodo)
     wiredGetTodo( result) {
@@ -28,7 +33,20 @@ wiredTodoResult;
         }
     }
 
-   
+    @wire(getTodoDone)
+    wiredGetTodoDone( result) {
+        this.wiredTodoResult = result;
+        if (result.data) {
+            this.todosdn = result.data;
+            this.error = undefined;
+        } else if (result.error) {
+            this.error = result.error;
+            this.todosdn = undefined;
+        }
+    }
+
+    
+
     deleteHandler(event) {
         const recordId = event.currentTarget.dataset.id;
         
@@ -41,7 +59,7 @@ wiredTodoResult;
                         variant: 'success'
                     })
                 );
-                return refreshApex(this.wiredTodoResult);
+            return refreshApex(this.wiredTodoResult);
             })
             .catch((error) => {
                 this.dispatchEvent(
@@ -56,15 +74,28 @@ wiredTodoResult;
       
          
     }
-       
-    assignHandler(event){
-        this.todoId = event.currentTarget.dataset.id;
-        console.log(this.todoId);
-        updateTodoStatus( {recId: this.todoId })
-        return refreshApex(this.wiredTodoResult);
-    }
-  
+      
+
     
+       
+    
+      updateTodoHandler(event) {
+        if (event) {
+            refreshApex(this.wiredTodoResult);
+        }
+      }
+
+
+      render() {
+        return this.showTemplateProgress ? templateProgress : templateDone;
+    }
+
+    switchTemplate() {
+        this.showTemplateProgress = !this.showTemplateProgress;
+    
+        
+    }
+
 
 
 }

@@ -2,19 +2,31 @@ public with sharing class GetTodoSubTodo {
     
     @AuraEnabled(cacheable=true)
     public static List<ToDo__c> getTodo(){
-       String userId =UserInfo.getUserId();
+       
         return[SELECT Name, Status__c, OwnerId, (SELECT Id, Name FROM SubToDos__r) 
-        FROM ToDo__c  WHERE OwnerId =: userId AND Status__c = 'In progress'];
+        FROM ToDo__c  WHERE Status__c = 'In progress'];
     
     }
 
     @AuraEnabled(cacheable=true)
-    public static List<ToDo__c> getQueue(){
-       String userId =UserInfo.getUserId();
+    public static List<ToDo__c> getTodoDone(){
+      
         return[SELECT Name, Status__c, OwnerId, (SELECT Id, Name FROM SubToDos__r) 
-        FROM ToDo__c  WHERE OwnerId !=: userId WITH SECURITY_ENFORCED];
+        FROM ToDo__c  WHERE Status__c = 'Done'];
     
     }
+
+
+
+    @AuraEnabled(cacheable=true)
+    public static List<ToDo__c> getQueue(){
+      
+        return[SELECT Name, Status__c, (SELECT Id, Name FROM SubToDos__r) 
+        FROM ToDo__c  WHERE Status__c ='Ready to take'];
+    
+    }
+
+
     @AuraEnabled
    public static Boolean updateSubTodoStatus(String recId){
        SubToDo__c sub=[Select Id, IsDone__c from SubToDo__c WHERE Id=: recId];
@@ -45,5 +57,25 @@ public with sharing class GetTodoSubTodo {
        }
       return true;
    }
+
+   @AuraEnabled(cacheable=true)
+   public static List<ToDo__c> search(String searchKey) {
+       String key = '%' + searchKey + '%';
+       String userId = UserInfo.getUserId();
+       List<SubToDo__c> sbtd = [SELECT ToDo__c, Name, ToDo__r.OwnerId FROM SubToDo__c
+        WHERE Name LIKE :key AND ToDo__r.OwnerId =: userId];
+        List<ToDo__c> tdList = New List<ToDo__c>();
+       for(SubToDo__c sb : sbtd){
+          ToDo__c td = New ToDo__c();
+           td.Id = sb.ToDo__c;
+            tdList.add(td);
+        }
+                
+       return [SELECT Id, Name, Status__c, OwnerId, (SELECT Name FROM SubToDos__r) 
+       FROM ToDo__c Where (Name LIKE :key AND OwnerId =: userId) OR Id IN : tdList];                 
+   }
+
+
+
 }
 

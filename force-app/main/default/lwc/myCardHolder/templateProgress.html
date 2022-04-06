@@ -1,0 +1,50 @@
+<template>
+    
+        <template if:true={stodo}>
+            <div >
+            <template for:each={stodo} for:item="todo">
+
+                <lightning-layout key={todo.Id} class="search">
+               <p horizontal-align="space">
+                <c-single-card
+                    todo={todo} onupdate={updateTodoHandler}
+                ></c-single-card>
+                <br></p>
+        
+              
+                <lightning-button-icon icon-name="action:delete" onclick={deleteHandler} 
+                data-id={todo.Id}></lightning-button-icon>
+                <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
+        
+        </lightning-layout>
+  
+            </template>
+        </div>
+        </template>
+  
+    <div  >
+        <template if:true={todos}>
+          <template for:each={todos} for:item="todo">
+            <lightning-layout key={todo.Id} >
+           <p horizontal-align="space">
+            <c-single-card
+                todo={todo} onupdate={updateTodoHandler}
+            ></c-single-card>
+            <br></p>
+
+          
+            <lightning-button-icon icon-name="action:delete" onclick={deleteHandler} 
+            data-id={todo.Id}></lightning-button-icon>
+            <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
+
+    </lightning-layout>
+    
+        </template>
+    </template>
+        </div>
+
+
+
+    <lightning-button label="Show my closed Todos" class="c-button"
+    onclick={switchTemplate}></lightning-button>
+</template>
