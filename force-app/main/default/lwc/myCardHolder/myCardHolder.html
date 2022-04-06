@@ -1,0 +1,25 @@
+<template>
+    <div  >
+        
+        
+        <template for:each={todos} for:item="todo">
+            <lightning-layout key={todo.Id} >
+           <p horizontal-align="space">
+            <c-single-card
+                todo={todo} onupdate={updateTodoHandler}
+            ></c-single-card>
+            <br></p>
+           
+            <template if:true={todos}>
+            <lightning-button-icon icon-name="action:delete" onclick={deleteHandler} 
+            data-id={todo.Id}></lightning-button-icon>
+            <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
+        </template>        
+    </lightning-layout>
+    
+        </template>
+    </div>
+    <lightning-button label="Show my closed Todos" class="c-button"
+    onclick={handleClick}></lightning-button>
+
+</template>

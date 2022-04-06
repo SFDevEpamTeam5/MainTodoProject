@@ -1,0 +1,33 @@
+<template>
+    <template if:true={todo}>
+        
+            <lightning-layout class="c-card" padding="around-small">
+                <lightning-input  class="slds-p-left_small" type="checkbox" 
+                onclick={updateHandler} data-id={todo.Id} >
+                </lightning-input>
+              <span class="c-todo">{todo.Name}</span>
+             
+            </lightning-layout>
+            
+        
+    </template>
+    
+    <template for:each={todo.SubToDos__r} for:item="subtodo">
+        <lightning-layout key={subtodo.Id} class="conteiner" >
+            <lightning-input  class="slds-p-left_small" type="checkbox" 
+                onclick={updateSub} data-id={subtodo.Id} checked={checkboxVal} >
+                </lightning-input>
+            <span class="slds-text-align_center">{subtodo.Name}</span>
+            
+    </lightning-layout>   
+
+        </template>
+    <template if:false={todo}><p>No data available.</p></template>
+   
+
+    <template if:true={error}>
+        <c-error-panel errors={error}></c-error-panel>
+    </template>
+    
+   
+</template>

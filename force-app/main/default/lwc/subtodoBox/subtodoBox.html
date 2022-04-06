@@ -1,0 +1,22 @@
+<template>
+    <template if:true={task}>
+
+        <lightning-layout class="c-card" padding="around-small">        
+          <span class="c-todo">{task.Name}</span>
+         
+        </lightning-layout>
+    </template>
+<template for:each={task.SubToDos__r} for:item="sub">
+    <lightning-layout   key={sub.Id} class="conteiner" >
+       
+        <span class="slds-text-align_center">{sub.Name}</span>
+        
+</lightning-layout>   
+
+    </template>
+    <template if:false={task}><p>No data available.</p>
+  <c-error-panel errors={error}></c-error-panel>
+    </template>
+
+
+</template>
