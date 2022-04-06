@@ -1,6 +1,6 @@
 import updateSubTodoStatus from '@salesforce/apex/GetTodoSubTodo.updateSubTodoStatus';
 import updateTodoStatus from '@salesforce/apex/GetTodoSubTodo.updateTodoStatus';
-import { LightningElement, api, } from 'lwc';
+import { LightningElement, api, track} from 'lwc';
 
 
 
@@ -9,7 +9,7 @@ import { LightningElement, api, } from 'lwc';
 export default class SingleCard extends LightningElement {
     subtodoId;
     todoId;
-
+    checkboxVal=false;
     @api todo;
    
  
@@ -22,8 +22,9 @@ export default class SingleCard extends LightningElement {
       
        this.subtodoId = event.currentTarget.dataset.id;
        console.log(this.subtodoId);
-      updateSubTodoStatus( {recId: this.subtodoId })
-       
+        updateSubTodoStatus( {recId: this.subtodoId })
+      this.checkboxVal = true ;
+      console.log(this.checkboxVal);
     }             
          
 

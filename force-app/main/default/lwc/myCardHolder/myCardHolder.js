@@ -19,6 +19,7 @@ export default class MyCardHolder extends LightningElement {
 
 todoId;
  wiredTodoResult;
+ wiredTodoDoneResult
  showTemplateProgress = true;
 	
 	@wire(getTodo)
@@ -60,6 +61,7 @@ todoId;
                     })
                 );
             return refreshApex(this.wiredTodoResult);
+         
             })
             .catch((error) => {
                 this.dispatchEvent(
@@ -75,11 +77,7 @@ todoId;
          
     }
       
-
-    
-       
-    
-      updateTodoHandler(event) {
+       updateTodoHandler(event) {
         if (event) {
             refreshApex(this.wiredTodoResult);
         }

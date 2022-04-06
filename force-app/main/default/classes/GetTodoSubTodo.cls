@@ -43,19 +43,23 @@ public with sharing class GetTodoSubTodo {
 
    @AuraEnabled
    public static Boolean updateTodoStatus(String recId){
-       ToDo__c td=[Select Id, Status__c, OwnerId from ToDo__c WHERE Id=: recId];
-           if(td.Status__c == 'Ready to take'){
+       ToDo__c td=[Select Id, Status__c, OwnerId FROM ToDo__c WHERE Id=: recId];
+          if(td.Status__c == 'Ready to take'){
            td.Status__c ='In progress';
            td.OwnerId = UserInfo.getUserId();
-       }
-       else{ td.Status__c = 'Done';}
+            } else{
+                td.IsDone__c = true;
+                td.Status__c = 'Done';
+                td.Completion_Date__c = Date.Today(); }
+       
+    
        try{
            update td;
        }
 	   catch (Exception e) {
            System.debug('unable to update the record due to'+e.getMessage());
        }
-      return true;
+     return true;
    }
 
    @AuraEnabled(cacheable=true)
