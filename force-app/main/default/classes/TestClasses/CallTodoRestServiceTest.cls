@@ -32,8 +32,7 @@
         
         Test.startTest();
         Todo__c res = CallTodoRestService.getTodo('a008c00000a9NHMSD2');
-        Test.stopTest();
-        System.debug(res);    
+        Test.stopTest();   
         System.assertEquals(null, res, 'Not null response');
     }
 
@@ -185,7 +184,6 @@
     
         System.assertEquals(null, res, 'Not Null response when call put todo bad req');
     }
-    @TestVisible
     private static List<Todo__c> fullListOfTodos(){
         List<Todo__c> listT = new List<Todo__c>();
         Todo__c td = [SELECT Id, Name, isDone__c, Id_Todo_from_another_org__c FROM Todo__c WHERE Name = 'String name 3'];

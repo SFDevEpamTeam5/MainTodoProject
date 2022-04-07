@@ -134,7 +134,8 @@ global with sharing class TodoAPI {
         Id another = t.Id;
         String idFromAnotherOrg = t.Id_Todo_from_another_org__c;  
         if(String.isNotEmpty(t.Id_Todo_from_another_org__c)){
-            t.Id = t.Id_Todo_from_another_org__c;   
+            t.Id = t.Id_Todo_from_another_org__c;
+            System.debug('t.Id' + t.Id);   
         }
         t.Id_Todo_from_another_org__c = another;
         t.Insert_from_remote_org__c = true;
@@ -160,3 +161,5 @@ global with sharing class TodoAPI {
         return todoId;
     }
 }
+
+//test 91%
