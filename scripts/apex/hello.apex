@@ -22,3 +22,15 @@ ToDoClearingBatch todoClearBatch = new ToDoClearingBatch();
 Database.executeBatch(todoClearBatch);
 
 System.debug(Date.today().addMonths((-1)*3));
+
+Map<String, Schema.SObjectField> schemaFieldMap = Schema.SObjectType.ToDo__c.fields.getMap();
+for(Schema.SObjectField F : Schema.SObjectType.ToDo__c.fields.getMap().values()) {
+    System.debug(F.getDescribe().getName());
+}
+List<ToDo__c> todolist = new List<ToDo__c>();
+for (Integer i = 0;i<10;i++) {
+    ToDo__c t = new Todo__c(Name = 'todo test '+i+1);
+    t.Deadline__c = Date.today().addDays(i+1);
+    todolist.add(t);
+}
+insert todolist;
