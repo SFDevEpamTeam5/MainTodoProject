@@ -10,11 +10,13 @@
             ></c-single-card>
             <br></p>
            
-            <template if:true={todos}>
-            <lightning-button-icon icon-name="action:delete" onclick={deleteHandler} 
-            data-id={todo.Id}></lightning-button-icon>
+        <!--    <template if:true={todos}>
+                <lightning-button  onclick={handleShowModal} 
+                data-id={todo.Id} label="Delete"></lightning-button>
+                <c-confirm-deleting-modal-window>                
+            </c-confirm-deleting-modal-window>
             <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
-        </template>        
+        </template>-->
     </lightning-layout>
     
         </template>
