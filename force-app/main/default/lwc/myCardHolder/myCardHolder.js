@@ -3,6 +3,8 @@ import getTodo from '@salesforce/apex/GetTodoSubTodo.getTodo';
 import { deleteRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
+import { publish, MessageContext } from 'lightning/messageService';
+import RECORD_SELECTED_CHANNEL from '@salesforce/messageChannel/Record_Selected__c';
 
 import templateProgress from './templateProgress.html';
 import templateDone from './templateDone.html';
@@ -14,6 +16,7 @@ export default class MyCardHolder extends LightningElement {
 @track error;
 @track todosdn;
 @api stodo;
+@api recordId;
 
 
 
@@ -21,6 +24,9 @@ todoId;
  wiredTodoResult;
  wiredTodoDoneResult
  showTemplateProgress = true;
+
+ @wire(MessageContext)
+    messageContext;
 	
 	@wire(getTodo)
     wiredGetTodo( result) {
@@ -46,37 +52,30 @@ todoId;
         }
     }
 
-    
-
-    deleteHandler(event) {
-        const recordId = event.currentTarget.dataset.id;
+    handleShowModal(event){
+        const payload = { recordId: event.target.todo.Id };
+        publish(this.messageContext, RECORD_SELECTED_CHANNEL, payload);
         
-        deleteRecord(recordId)
-            .then(() => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Success',
-                        message: 'ToDo Task deleted',
-                        variant: 'success'
-                    })
-                );
-            return refreshApex(this.wiredTodoResult);
-         
-            })
-            .catch((error) => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Error deleting record',
-                        message: reduceErrors(error).join(', '),
-                        variant: 'error'
-                    })
-                );
-            });
-
-      
-         
     }
+
+    cancelModalHandler(event){
+        const modal = this.template.querySelector('c-confirm-deleting-modal-window');
+        modal.hide();
+    }
+
+ /*   deleteModalHandler(event){
+    
+        deleteRecord( {recId: this.recordId })
+            .then(() => {
+                return refreshApex(this.wiredTodoResult);
+                    })
+            .catch(error => {
+                console.error("Error on deleting records ", error);
+              });
+    }*/
       
+
+
        updateTodoHandler(event) {
         if (event) {
             refreshApex(this.wiredTodoResult);
@@ -93,7 +92,6 @@ todoId;
     
         
     }
-
-
+    
 
 }
