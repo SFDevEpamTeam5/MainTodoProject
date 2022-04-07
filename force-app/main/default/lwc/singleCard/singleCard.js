@@ -13,7 +13,8 @@ export default class SingleCard extends LightningElement {
     @api todo;
    
  
-    checkboxVal = false;
+    checkboxVal1 = false;
+    checkboxVal2 = false;
    
    
 
@@ -33,18 +34,8 @@ export default class SingleCard extends LightningElement {
         this.todoId = event.currentTarget.dataset.id;
         console.log(this.todoId);
         updateTodoStatus( {recId: this.todoId })
-        .then(result => {
-          //on successful update, fire an event to notify parent component
-          const updateEvent = new CustomEvent("update", { detail: this.todoId });
-          this.dispatchEvent(updateEvent);
-          
-        })
-        .catch(error => {
-          console.error("Error in updatig records ", error);
-        });
-
-       
-    }
+        checkboxVal2 = true;
+          }
     
     
    

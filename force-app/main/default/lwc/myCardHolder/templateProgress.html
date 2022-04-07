@@ -11,11 +11,10 @@
                 ></c-single-card>
                 <br></p>
                
-                <lightning-button  onclick={handleShowModal} 
-                data-id={todo.Id} label="Delete"></lightning-button>
-                <c-confirm-deleting-modal-window oncancledelete ={cancelModalHandler} 
-                ondeletetodo={deleteModalHandler}>                
-            </c-confirm-deleting-modal-window>
+                
+            <lightning-button-icon icon-name="action:delete" onclick={deleteHandler} 
+            data-id={todo.Id}></lightning-button-icon>      
+           
                 <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
                 <template if:true={modal}>
                 <c-add-edit-window></c-add-edit-window>
@@ -37,10 +36,9 @@
             <br></p>
 
          
-                <lightning-button  onclick={handleShowModal} 
-                data-id={todo.Id} label="Delete"></lightning-button>
-                <c-confirm-deleting-modal-window oncancledelete ={cancelModalHandler}>                
-            </c-confirm-deleting-modal-window>
+               
+            <lightning-button-icon icon-name="action:delete" onclick={deleteHandler} 
+            data-id={todo.Id}></lightning-button-icon>
                 <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
                 <template if:true={modal}><c-add-edit-window></c-add-edit-window></template>
         

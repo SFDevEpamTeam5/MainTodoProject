@@ -21,27 +21,49 @@
                         ></lightning-button>
                     </lightning-layout-item>
                     </lightning-layout>
-                    <template if:true={stodo}>
+                <!--    <template if:true={stodo}>
                         <div >
                            <c-my-card-holder stodo={stodo}></c-my-card-holder></div>
                    
-                    </template>
+                    </template>-->
 
                 </div>
                     
                     <lightning-button label="Add new Todo" class="c-button button-right"
                     onclick={handleClick}></lightning-button>
-                <lightning-layout-item padding="around-small" size="12">
+        
+          
+
+
+
+                <lightning-layout-item padding="around-small" size="9">
                     <lightning-layout >
-                        <template if:false={stodo}>
-                            <div >
-                               <c-my-card-holder ></c-my-card-holder></div>
-                       
+                        <template if:true={searchKey}>
+                            <template for:each={stodo} for:item="todo">
+                                <lightning-layout key={todo.Id} >
+                               <p horizontal-align="space">
+                                <c-single-card
+                                    todo={todo} 
+                                ></c-single-card>
+                                <br></p>
+                                             
+                                <lightning-button-icon icon-name="action:delete" onclick={deleteHandler} 
+                                data-id={todo.Id}></lightning-button-icon>        
+                                
+                                <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
+                                </lightning-layout>
                         </template>
-                        
-                       
+                        </template> 
+                       <template if:false={searchKey}>
+                            
+                        <div >
+                           <c-my-card-holder ></c-my-card-holder></div>
+                   
+                    
+                       </template>
                     </lightning-layout>
                 </lightning-layout-item>
+       
             </lightning-layout>
         </div>
 </template>

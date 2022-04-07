@@ -3,7 +3,7 @@
         
             <lightning-layout class="c-card" padding="around-small">
                 <lightning-input  class="slds-p-left_small" type="checkbox" 
-                onclick={updateHandler} data-id={todo.Id} >
+                onclick={updateHandler} data-id={todo.Id} checked={checkboxVal2}>
                 </lightning-input>
               <span class="c-todo">{todo.Name}</span>
              
@@ -15,7 +15,7 @@
     <template for:each={todo.SubToDos__r} for:item="subtodo">
         <lightning-layout key={subtodo.Id} class="conteiner" >
             <lightning-input  class="slds-p-left_small" type="checkbox" 
-                onclick={updateSub} data-id={subtodo.Id} checked={checkboxVal} >
+                onclick={updateSub} data-id={subtodo.Id} checked={checkboxVal1} >
                 </lightning-input>
             <span class="slds-text-align_center">{subtodo.Name}</span>
             

@@ -1,10 +1,9 @@
 <template>
     <div>
         <template for:each={tasks} for:item="task">
-            <lightning-layout key={task.Id} >
-           <p horizontal-align="space">
+            <lightning-layout key={task.Id} class="slds-m-top_x-small">
+           <p class="conteiner" >{task.Name}
            
-                <c-subtodo-box task={task}></c-subtodo-box>
             <br></p>  
              
             <lightning-button title="Assign" label="Assing" onclick={assingHandler} 

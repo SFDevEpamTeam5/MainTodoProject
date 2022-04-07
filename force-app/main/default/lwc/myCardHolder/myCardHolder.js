@@ -20,7 +20,7 @@ export default class MyCardHolder extends LightningElement {
 
 
 todoId;
- wiredTodoResult;
+ @track wiredTodoResult;
  wiredTodoDoneResult
  showTemplateProgress = true;
 
@@ -50,34 +50,39 @@ todoId;
         }
     }
 
-    
-
-    
-
-   editModalHandler(event){
-        const modal = this.template.querySelector('c-add-edit-window');
-        modal.show();
-    }
-
-
- /*   deleteModalHandler(event){
-    
-        deleteRecord( {recId: this.recordId })
+    deleteHandler(event) {
+        const recordId = event.currentTarget.dataset.id;
+        
+        deleteRecord(recordId)
             .then(() => {
-                return refreshApex(this.wiredTodoResult);
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Success',
+                        message: 'ToDo Task deleted',
+                        variant: 'success'
                     })
-            .catch(error => {
-                console.error("Error on deleting records ", error);
-              });
-    }*/
-      
+                );
+                return refreshApex(this.wiredTodoResult);
+            })
+            .catch((error) => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error deleting record',
+                        message: reduceErrors(error).join(', '),
+                        variant: 'error'
+                    })
+                );
+            });
+        }
 
+    
 
-       updateTodoHandler(event) {
+   
+  /*     updateTodoHandler(event) {
         if (event) {
             refreshApex(this.wiredTodoResult);
         }
-      }
+      }*/
 
 
       render() {
@@ -86,7 +91,7 @@ todoId;
 
     switchTemplate() {
         this.showTemplateProgress = !this.showTemplateProgress;
-    
+        refreshApex(this.wiredTodoResult);
         
     }
     
