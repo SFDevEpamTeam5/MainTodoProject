@@ -17,7 +17,12 @@ export default class AddEditWindow extends LightningElement {
     @track subisdone;
     @track todoisdone;
     @track completiondateid;
+  
+   
+
     connectedCallback() {
+        
+        
         getSubTodoList({recordid: this.recordid}).
         then(result => {
             this.subtodolist = result;
@@ -25,7 +30,10 @@ export default class AddEditWindow extends LightningElement {
         catch(error => {
             this.error = error;
         });
+    
     }
+
+   
     renderedCallback() {
          this.newsubtodo = this.template.querySelector('.newsubtodo');
          this.formid = this.template.querySelector('.formid');

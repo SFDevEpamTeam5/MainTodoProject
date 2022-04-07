@@ -1,27 +1,56 @@
 <template>
-    <div  >
-        
-        
-        <template for:each={todos} for:item="todo">
-            <lightning-layout key={todo.Id} >
+    
+    <template if:true={stodo}>
+        <div >
+        <template for:each={stodo} for:item="todo">
+
+            <lightning-layout key={todo.Id} class="search">
            <p horizontal-align="space">
             <c-single-card
                 todo={todo} onupdate={updateTodoHandler}
             ></c-single-card>
             <br></p>
            
-        <!--    <template if:true={todos}>
-                <lightning-button  onclick={handleShowModal} 
-                data-id={todo.Id} label="Delete"></lightning-button>
-                <c-confirm-deleting-modal-window>                
-            </c-confirm-deleting-modal-window>
+            <lightning-button  onclick={handleShowModal} 
+            data-id={todo.Id} label="Delete"></lightning-button>
+            <c-confirm-deleting-modal-window oncancledelete ={cancelModalHandler} 
+            ondeletetodo={deleteModalHandler}>                
+        </c-confirm-deleting-modal-window>
             <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
-        </template>-->
-    </lightning-layout>
+            <c-add-edit-window></c-add-edit-window>
     
+    </lightning-layout>
+
         </template>
     </div>
-    <lightning-button label="Show my closed Todos" class="c-button"
-    onclick={handleClick}></lightning-button>
+    </template>
 
+<div  >
+    <template if:true={todos}>
+      <template for:each={todos} for:item="todo">
+        <lightning-layout key={todo.Id} >
+       <p horizontal-align="space">
+        <c-single-card
+            todo={todo} onupdate={updateTodoHandler}
+        ></c-single-card>
+        <br></p>
+
+     
+            <lightning-button  onclick={handleShowModal} 
+            data-id={todo.Id} label="Delete"></lightning-button>
+            <c-confirm-deleting-modal-window oncancledelete ={cancelModalHandler}>                
+        </c-confirm-deleting-modal-window>
+            <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
+           <c-add-edit-window></c-add-edit-window>
+
+</lightning-layout>
+
+    </template>
+</template>
+    </div>
+
+
+
+<lightning-button label="Show my closed Todos" class="c-button"
+onclick={switchTemplate}></lightning-button>
 </template>

@@ -17,8 +17,9 @@
                 ondeletetodo={deleteModalHandler}>                
             </c-confirm-deleting-modal-window>
                 <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
-             
-        
+                <template if:true={modal}>
+                <c-add-edit-window></c-add-edit-window>
+            </template>
         </lightning-layout>
   
             </template>
@@ -41,8 +42,8 @@
                 <c-confirm-deleting-modal-window oncancledelete ={cancelModalHandler}>                
             </c-confirm-deleting-modal-window>
                 <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
-               
-
+                <template if:true={modal}><c-add-edit-window></c-add-edit-window></template>
+        
     </lightning-layout>
     
         </template>
