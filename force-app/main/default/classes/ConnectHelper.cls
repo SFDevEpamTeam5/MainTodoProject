@@ -8,17 +8,16 @@ public with sharing class ConnectHelper {
     private static String DELETEM = 'DELETE';
     public static String getAuthToken(){
         Http http = new Http();
-        HttpRequest req = new HttpRequest();
-        
+        HttpRequest req = new HttpRequest();  
         RestServiceSettings__c restServ = RestServiceSettings__c.getOrgDefaults();
+        req.setMethod(POST);
+        req.setEndpoint(restServiceOrgForToken + '/services/oauth2/token');
         if(!Test.isRunningTest()){
             String consumerKey = restServ.Consumer_Key__c;
         	String consumerSecret = restServ.Consumer_Secret__c;
         	String body = 'grant_type=password' + '&client_id='+consumerKey + 
         	'&client_secret='+consumerSecret + '&username='+ EncodingUtil.urlEncode(restServ.username__c, 'UTF-8') +
         	'&password='+ EncodingUtil.urlEncode(restServ.password__c + restServ.SecurityToken__c, 'UTF-8');
-        	req.setMethod(POST);
-        	req.setEndpoint(restServiceOrgForToken + '/services/oauth2/token');
         	req.setBody(body);
 
         	HttpResponse response = http.send(req); 
@@ -81,3 +80,5 @@ public with sharing class ConnectHelper {
         public String token_type {get;set;}
     }
 }
+
+//test 75%

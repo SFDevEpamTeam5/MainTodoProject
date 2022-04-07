@@ -95,7 +95,6 @@ public class CallTodoRestService {
         Map<Id, String> mapResultFromResponse = new Map<Id, String>();
         Map<Id, Id> todosWereCreated = new Map<Id, Id>();
             
-        
         String JSONString = JSON.serialize(listTodosForUpdate);
         HttpResponse response = ConnectHelper.makeRequest('PUT', JSONString, null, restServiceOrg);
         
@@ -110,17 +109,17 @@ public class CallTodoRestService {
                 if(res.contains('record created')){
                     String idCreatedTodo = res.substring(res.lastIndexOf(':') + 1).trim();
                     mapResultFromResponse.put(str, 'record created');
-                    todosWereCreated.put((Id)str, (Id)idCreatedTodo);
-                    if(todosWereCreated.size() > 0){
-                        updateTodos(todosWereCreated);
-                    }
+                    todosWereCreated.put((Id)str, (Id)idCreatedTodo);  
                 }
                 mapResultFromResponse.put(todoId, res);       
             }
         }
-            if(mapResultFromResponse.size() > 0){
-                return mapResultFromResponse;
-            }
+        if(todosWereCreated.size() > 0){
+            updateTodos(todosWereCreated);
+        }
+        if(mapResultFromResponse.size() > 0){
+            return mapResultFromResponse;
+        }
         return null;            
     }
           
@@ -132,7 +131,7 @@ public class CallTodoRestService {
             tid.Id_Todo_from_another_org__c = todosWereCreated.get(tid.Id);
         }
         update todoListOrigin;
-    }
-    
-        
+    }     
 }
+
+//test 98%
