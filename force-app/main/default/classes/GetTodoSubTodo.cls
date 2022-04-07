@@ -66,8 +66,8 @@ public with sharing class GetTodoSubTodo {
    public static List<ToDo__c> search(String searchKey) {
        String key = '%' + searchKey + '%';
        String userId = UserInfo.getUserId();
-       List<SubToDo__c> sbtd = [SELECT ToDo__c, Name, ToDo__r.OwnerId FROM SubToDo__c
-        WHERE Name LIKE :key AND ToDo__r.OwnerId =: userId];
+       List<SubToDo__c> sbtd = [SELECT ToDo__c, Name FROM SubToDo__c
+        WHERE Name LIKE :key];
         List<ToDo__c> tdList = New List<ToDo__c>();
        for(SubToDo__c sb : sbtd){
           ToDo__c td = New ToDo__c();
@@ -75,8 +75,8 @@ public with sharing class GetTodoSubTodo {
             tdList.add(td);
         }
                 
-       return [SELECT Id, Name, Status__c, OwnerId, (SELECT Name FROM SubToDos__r) 
-       FROM ToDo__c Where (Name LIKE :key AND OwnerId =: userId) OR Id IN : tdList];                 
+       return [SELECT Id, Name, Status__c, (SELECT Name FROM SubToDos__r) 
+       FROM ToDo__c Where Name LIKE :key OR Id IN : tdList];                 
    }
 
 

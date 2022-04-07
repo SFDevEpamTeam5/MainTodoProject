@@ -1,14 +1,12 @@
 .c-card{
-    border: 1px solid green;
+    
    
 }
 
 .conteiner{
     border: 1px solid black;
-    background: #e7e4e4;
+    background: #fffcfc;
+    width: fit-content;
+    height: 32px;
 }
 
-.c-todo{
-    width: fit-content;
-    height: 30px;
- }   

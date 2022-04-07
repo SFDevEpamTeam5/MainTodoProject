@@ -14,9 +14,7 @@ export default class MainScreen extends LightningElement {
     }
 
 
-    handleKeyChange(event) {
-        this.searchKey = event.target.value;
-    }
+   
 
     handleSearch() {
         search({ searchKey: this.searchKey })
@@ -29,5 +27,30 @@ export default class MainScreen extends LightningElement {
                 this.stodo = undefined;
             });
     }
+
+    deleteHandler(event) {
+        const recordId = event.currentTarget.dataset.id;
+        
+        deleteRecord(recordId)
+            .then(() => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Success',
+                        message: 'ToDo Task deleted',
+                        variant: 'success'
+                    })
+                );
+            })
+            .catch((error) => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error deleting record',
+                        message: reduceErrors(error).join(', '),
+                        variant: 'error'
+                    })
+                );
+            });
+        }
+
 
 }
