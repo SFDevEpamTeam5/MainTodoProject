@@ -3,8 +3,7 @@ import getTodo from '@salesforce/apex/GetTodoSubTodo.getTodo';
 import { deleteRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
-import { publish, MessageContext } from 'lightning/messageService';
-import RECORD_SELECTED_CHANNEL from '@salesforce/messageChannel/Record_Selected__c';
+
 
 import templateProgress from './templateProgress.html';
 import templateDone from './templateDone.html';
@@ -25,8 +24,7 @@ todoId;
  wiredTodoDoneResult
  showTemplateProgress = true;
 
- @wire(MessageContext)
-    messageContext;
+
 	
 	@wire(getTodo)
     wiredGetTodo( result) {
@@ -52,16 +50,15 @@ todoId;
         }
     }
 
-    handleShowModal(event){
-        const payload = { recordId: event.target.todo.Id };
-        publish(this.messageContext, RECORD_SELECTED_CHANNEL, payload);
-        
+    
+
+    
+
+   editModalHandler(event){
+        const modal = this.template.querySelector('c-add-edit-window');
+        modal.show();
     }
 
-    cancelModalHandler(event){
-        const modal = this.template.querySelector('c-confirm-deleting-modal-window');
-        modal.hide();
-    }
 
  /*   deleteModalHandler(event){
     

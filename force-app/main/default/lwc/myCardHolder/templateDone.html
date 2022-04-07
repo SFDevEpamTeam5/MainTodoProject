@@ -15,6 +15,8 @@
             </c-confirm-deleting-modal-window>
             <lightning-button title="Edit" label="Edit" onclick={editModalHandler}></lightning-button>
         </template>
+    <template if:true={modal}>
+        <c-add-edit-window></c-add-edit-window></template>
         
     </lightning-layout>
     
